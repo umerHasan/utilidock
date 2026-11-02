@@ -1,0 +1,8 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { ToolCard } from '@/components/ToolCard';
+import { getCategory, getCategoryUtilities } from '@/lib/registry';
+export function generateStaticParams() { return [{ category: 'pdf' }]; }
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> { const { category: slug } = await params; const category = getCategory(slug); return category ? { title: `${category.name} — free online utilities`, description: category.description, alternates: { canonical: `/tools/${slug}` }, openGraph: { title: `${category.name} | UtiliDock`, description: category.description } } : {}; }
+export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) { const { category: slug } = await params; const category = getCategory(slug); if (!category) notFound(); const Icon = category.icon; const tools = getCategoryUtilities(slug); return <div className="page-shell container"><Breadcrumbs items={[{ label: 'All tools', href: '/tools' }, { label: category.name }]}/><section className="page-intro"><span className="page-icon"><Icon size={24}/></span><span className="eyebrow">CATEGORY</span><h1>{category.name}</h1><p>{category.description}</p></section><section className="listing-section"><div className="subsection-heading"><h2>Available tools</h2><span>{tools.length} ready to use</span></div><div className="tool-grid">{tools.map((tool) => <ToolCard key={tool.id} tool={tool}/>)}</div></section><div className="privacy-callout"><span>✳</span><p>Every file is processed locally in your browser. Nothing is uploaded.</p></div></div> }

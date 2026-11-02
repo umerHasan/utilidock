@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export function SiteFooter() { return <footer className="site-footer"><div className="container footer-inner"><Link className="brand" href="/"><span className="brand-mark">u</span><span>UtiliDock</span></Link><p>Everyday tools, one place.</p><div className="footer-links"><Link href="/#about">About</Link><a href="mailto:hello@utilidock.example">Contact</a><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div><small>© {new Date().getFullYear()} UtiliDock. Files stay on your device.</small></div></footer> }
