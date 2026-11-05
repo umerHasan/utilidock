@@ -4,8 +4,8 @@ import { validateFiles } from './file-validation';
 import { mergePdfFiles, imagesToPdf } from './pdf-service';
 import { PDFDocument } from 'pdf-lib';
 describe('utility registry', () => {
-  it('publishes only functional tools and resolves dedicated routes', () => { expect(getPublishedUtilities().map((tool) => tool.slug)).toEqual(['image-to-pdf', 'merge-pdf']); expect(getCategoryUtilities('pdf')).toHaveLength(2); expect(getUtility('pdf', 'merge-pdf')?.id).toBe('pdf-merge-pdf'); });
-  it('searches names, descriptions, and keywords', () => { expect(searchUtilities('photos').map((tool) => tool.slug)).toContain('image-to-pdf'); expect(searchUtilities('combine').map((tool) => tool.slug)).toContain('merge-pdf'); expect(searchUtilities('not a tool')).toHaveLength(0); });
+  it('publishes only functional tools and resolves dedicated routes', () => { expect(getPublishedUtilities().map((tool) => tool.slug)).toEqual(['image-to-pdf', 'merge-pdf', 'bill-splitter']); expect(getCategoryUtilities('pdf')).toHaveLength(2); expect(getCategoryUtilities('money')).toHaveLength(1); expect(getUtility('pdf', 'merge-pdf')?.id).toBe('pdf-merge-pdf'); expect(getUtility('money', 'bill-splitter')?.id).toBe('money-bill-splitter'); });
+  it('searches names, descriptions, and keywords', () => { expect(searchUtilities('photos').map((tool) => tool.slug)).toContain('image-to-pdf'); expect(searchUtilities('combine').map((tool) => tool.slug)).toContain('merge-pdf'); expect(searchUtilities('delivery').map((tool) => tool.slug)).toContain('bill-splitter'); expect(searchUtilities('not a tool')).toHaveLength(0); });
 });
 describe('file validation', () => {
   it('accepts supported formats and rejects unsupported, oversized, or excess files', () => {

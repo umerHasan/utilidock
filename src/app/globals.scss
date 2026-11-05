@@ -48,3 +48,59 @@ a { color:inherit; text-decoration:none; } button,input,select { font:inherit; }
 @media (max-width:900px) { .hero-inner { grid-template-columns:1.1fr .9fr; }.hero-content h1 { font-size:58px; }.hero-art { transform:scale(.86); }.how-layout,.faq-layout { gap:45px; } }
 @media (max-width:700px) { .site-header { height:64px; }.nav-shell { justify-content:space-between;gap:8px; }.nav-links,.header-cta { display:none; }.mobile-menu { display:block;position:relative; }.mobile-menu summary { list-style:none;display:grid;place-items:center;width:39px;height:39px;border:1px solid var(--line);border-radius:7px;color:#476152;cursor:pointer; }.mobile-menu summary::-webkit-details-marker { display:none; }.mobile-menu>div { position:absolute;right:0;top:46px;width:180px;background:#fff;border:1px solid var(--line);box-shadow:0 12px 25px #15362b1a;border-radius:8px;padding:7px;display:grid;z-index:60; }.mobile-menu>div a { padding:11px;border-radius:5px;font-size:12px; }.mobile-menu>div a:hover { background:var(--soft); }.home-hero,.hero-inner { min-height:unset; }.hero-inner { display:block;padding-top:48px;padding-bottom:52px; }.hero-content { padding:0; }.hero-content h1 { font-size:51px;letter-spacing:-3.2px;margin-top:22px; }.hero-content>p { font-size:14px; }.hero-art { height:270px;margin-top:14px;transform:scale(.76); }.hero-scroll { display:none; }.section { padding-top:66px;padding-bottom:70px; }.section-heading { align-items:flex-start;gap:18px;flex-direction:column; }.section-heading h2,.value-section h2,.how-layout h2,.faq-layout h2 { font-size:27px; }.tool-grid { grid-template-columns:1fr; }.how-layout,.value-section,.faq-layout { grid-template-columns:1fr;gap:31px; }.how-section,.faq-section { padding:58px 0; }.steps { gap:11px; }.steps span { margin-bottom:18px; }.steps strong { font-size:11px; }.steps p { font-size:10px; }.value-section { padding-top:62px;padding-bottom:62px; }.closing-cta { align-items:flex-start;gap:23px;flex-direction:column;padding-top:56px;padding-bottom:56px; }.footer-inner { grid-template-columns:1fr;gap:13px; }.footer-links { flex-wrap:wrap; }.footer-inner>small { grid-column:auto;margin-top:7px; }.page-shell { padding-top:20px;padding-bottom:65px; }.breadcrumbs { margin-bottom:35px; }.page-intro h1,.legal-page h1 { font-size:38px; }.utility-intro h1 { font-size:35px; }.workspace { grid-template-columns:1fr; }.workspace-main { padding:16px; }.workspace-options { border-left:0;border-top:1px solid #e8eee9;padding:20px 16px; }.workspace-heading h2 { font-size:14px; }.dropzone { min-height:165px; }.result-panel { flex-wrap:wrap;padding:18px; }.result-panel .button { margin-left:0; }.result-panel .text-button { margin-left:auto; }.instructions { grid-template-columns:1fr;gap:14px;margin-top:47px; }.tool-faq { margin-top:48px; }.art-orbit.orbit-one { width:380px; }.art-tag.tag-image { left:0; }.art-tag.tag-check { right:0; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; } }
+
+.bill-workspace { max-width:1040px;margin:0 auto;border:1px solid var(--line);border-radius:12px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.85fr);overflow:hidden;background:#fff;box-shadow:0 12px 35px rgba(23,55,44,.04); }
+.bill-main { min-width:0; }
+.bill-section { padding:24px;border-bottom:1px solid var(--line); }
+.bill-section:last-child { border-bottom:0; }
+.bill-section-heading { display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:19px; }
+.bill-section-heading h2,.bill-summary h2 { margin:7px 0 0;font:700 16px var(--font-display); }
+.bill-section-heading p { margin:5px 0 0;color:#748179;font-size:11px;line-height:1.55; }
+.bill-add-button { min-height:36px;padding:0 11px;white-space:nowrap;font-size:10px; }
+.bill-field { min-width:0;display:grid;align-content:start;gap:6px;color:#5c6a61;font-size:10px;font-weight:600; }
+.bill-field>span:first-child { min-height:12px; }
+.bill-field input,.bill-field select { width:100%;height:37px;min-width:0;padding:0 9px;border:1px solid #dce5de;border-radius:6px;background:#fff;color:#33483b;font-size:11px; }
+.bill-field input::placeholder { color:#a0aaa3; }
+.bill-total-field { max-width:250px; }
+.bill-total-field input { height:43px;font-size:14px;font-weight:700; }
+.bill-people { display:grid;gap:11px; }
+.bill-person { padding:15px;border:1px solid #e6ece7;border-radius:8px;background:#fcfdfc; }
+.bill-person-heading { display:flex;align-items:end;gap:8px;margin-bottom:12px; }
+.bill-person-name { flex:1; }
+.bill-items { display:grid;gap:8px; }
+.bill-item-row { display:grid;grid-template-columns:minmax(0,1fr) 125px 30px;align-items:end;gap:9px; }
+.bill-icon-button { width:30px;height:32px;display:grid;place-items:center;flex-shrink:0;border:1px solid #e2e9e3;border-radius:6px;background:#fff;color:#75847a;cursor:pointer; }
+.bill-icon-button:hover { border-color:#c7d7ca;color:#9a6154;background:#fffaf8; }
+.bill-item-remove { margin-bottom:0; }
+.bill-inline-button { display:inline-flex;align-items:center;gap:5px;margin-top:11px;padding:4px 0;border:0;background:none;color:var(--green);font-size:10px;font-weight:700;cursor:pointer; }
+.bill-inline-button:hover { color:#105840; }
+.bill-tax-controls { display:grid;grid-template-columns:1fr minmax(150px,.8fr);align-items:end;gap:20px; }
+.bill-tax-modes { min-width:0;margin:0;padding:0;border:0;display:flex;flex-wrap:wrap;gap:9px 16px; }
+.bill-tax-modes legend { width:100%;margin-bottom:9px;color:#5c6a61;font-size:10px;font-weight:600; }
+.bill-tax-modes label { display:flex;align-items:center;gap:6px;color:#64736a;font-size:10px; }
+.bill-tax-modes input { accent-color:var(--green); }
+.bill-input-suffix { display:flex;align-items:center;gap:8px; }
+.bill-input-suffix>span { color:#77847d;font-size:10px; }
+.bill-input-suffix input { flex:1; }
+.bill-empty-charges { margin:0;padding:13px;border:1px dashed #dce5de;border-radius:7px;color:#849188;font-size:10px;text-align:center; }
+.bill-charges { display:grid;gap:9px; }
+.bill-charge-row { display:grid;grid-template-columns:minmax(100px,1fr) 110px minmax(110px,.9fr) 30px;align-items:end;gap:9px; }
+.bill-summary { padding:25px 20px;background:#f8faf7;border-left:1px solid #e8eee9; }
+.bill-summary>.eyebrow { font-size:9px; }
+.bill-summary h2 { margin-bottom:7px; }
+.bill-summary-note { margin:0 0 16px;color:#748179;font-size:10px;line-height:1.6; }
+.bill-summary-totals { display:grid;gap:9px;padding:14px 0;border-top:1px solid #e1e9e4;border-bottom:1px solid #e1e9e4; }
+.bill-summary-totals>div,.bill-difference { display:flex;justify-content:space-between;align-items:center;gap:8px;color:#68776e;font-size:10px; }
+.bill-summary-totals strong { color:#354b3c;font-size:11px; }
+.bill-summary-totals .bill-calculated-total { padding-top:9px;border-top:1px solid #e1e9e4;color:#344a3c;font-weight:700; }
+.bill-difference { align-items:flex-start;margin:12px 0;padding:9px 10px;border-radius:6px;background:#fff1ed;color:#8f4b3b;line-height:1.45; }
+.bill-difference strong { text-align:right; }
+.bill-difference.balanced { background:#edf6eb;color:#39734d; }
+.bill-person-totals { display:grid;gap:8px;margin-top:14px; }
+.bill-person-total { padding:11px;border:1px solid #e4ebe5;border-radius:7px;background:#fff; }
+.bill-person-total>div { display:flex;justify-content:space-between;gap:8px;color:#344a3c;font-size:11px; }
+.bill-person-total>div b { font-size:12px; }
+.bill-person-total small { display:block;margin-top:6px;color:#7a877f;font-size:9px;line-height:1.5; }
+.bill-issues { display:grid;gap:5px;margin:12px 0 0;padding:10px 10px 10px 25px;border-radius:6px;background:#fff3ef;color:#964b3a;font-size:10px;line-height:1.5; }
+@media (max-width:900px) { .bill-workspace { grid-template-columns:minmax(0,1.4fr) minmax(250px,.8fr); }.bill-main .bill-section { padding:20px; }.bill-charge-row { grid-template-columns:minmax(90px,1fr) 95px minmax(100px,.9fr) 30px;gap:6px; } }
+@media (max-width:700px) { .bill-workspace { grid-template-columns:1fr; }.bill-summary { border-left:0;border-top:1px solid #e8eee9; }.bill-section-heading { align-items:flex-start;flex-direction:column; }.bill-tax-controls { grid-template-columns:1fr;gap:16px; }.bill-charge-row { grid-template-columns:minmax(0,1fr) minmax(90px,.55fr) 30px; }.bill-charge-name { grid-column:1/3; }.bill-charge-split { grid-column:1/3; }.bill-charge-remove { grid-column:3;grid-row:2;align-self:end; }.bill-item-row { grid-template-columns:minmax(0,1fr) 95px 30px;gap:6px; } }
