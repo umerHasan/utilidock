@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { BillSplit } from '@/components/BillSplit';
+import { AttendanceTracker } from '@/components/AttendanceTracker';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ImageToPdf } from '@/components/ImageToPdf';
 import { MergePdf } from '@/components/MergePdf';
@@ -22,6 +23,11 @@ const instructions: Record<Utility['component'], string[]> = {
     'Enter tax as a percentage or fixed amount; tax is split by item subtotals.',
     'Add any extra charges, choose how each charge is split, and check the totals.',
   ],
+  'attendance-tracker': [
+    'Choose a month; every date in it appears in the attendance table.',
+    'Add a reusable shift to apply it to the month, clear it on days off, or switch to scheduled hours for daily targets.',
+    'Enter clock-in and clock-out times to see your running scheduled, worked, overtime, and shortfall totals.',
+  ],
 };
 
 const faqs: Record<Utility['component'], Array<{ question: string; answer: string }>> = {
@@ -40,6 +46,13 @@ const faqs: Record<Utility['component'], Array<{ question: string; answer: strin
     { question: 'Can delivery or other charges be split equally?', answer: 'Yes. For each extra charge, choose an equal split or a split proportional to item subtotals.' },
     { question: 'Does the receipt total change anyone’s share?', answer: 'No. The receipt total is used to show whether your entered items, tax, and charges reconcile. The difference is not silently assigned.' },
     { question: 'Are my bill details saved or uploaded?', answer: 'No. All bill calculations stay in this page and are not saved or uploaded.' },
+  ],
+  'attendance-tracker': [
+    { question: 'What does the monthly statistics overview show?', answer: 'It shows the full monthly schedule, worked hours entered so far, the schedule through today, remaining scheduled hours, overtime, recorded shortfall, and past scheduled dates still awaiting an entry. Shortfall is shown in hours, not as a currency deduction estimate.' },
+    { question: 'Can I check my totals before the month ends?', answer: 'Yes. Totals update as you enter attendance. Only completed time entries count toward overtime or shortfall; past dates with no entry remain pending rather than being assumed absent.' },
+    { question: 'How do shifts and scheduled hours work?', answer: 'Shift mode is selected by default. Add a reusable shift and it is applied to every date in the selected month and used as the default in new months. Clear it on days off; you can also apply a shift to selected dates. Or switch to scheduled hours and enter a duration for each day.' },
+    { question: 'Are overnight shifts and breaks supported?', answer: 'Overnight clock and shift times are supported. Worked hours are calculated as clock-out minus clock-in; breaks are not deducted.' },
+    { question: 'Where is my attendance data saved?', answer: 'Attendance entries and saved shifts are stored in this browser only. They are not uploaded to UtiliDock.' },
   ],
 };
 
@@ -66,11 +79,12 @@ export default async function UtilityPage({ params }: { params: Promise<{ catego
   if (!tool || !category) notFound();
 
   const Icon = tool.icon;
-  const component = tool.component === 'image-to-pdf'
-    ? <ImageToPdf />
-    : tool.component === 'merge-pdf'
-      ? <MergePdf />
-      : <BillSplit />;
+  const component = {
+    'image-to-pdf': <ImageToPdf />,
+    'merge-pdf': <MergePdf />,
+    'bill-splitter': <BillSplit />,
+    'attendance-tracker': <AttendanceTracker />,
+  }[tool.component];
 
   return (
     <div className="page-shell container utility-page">

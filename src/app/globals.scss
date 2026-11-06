@@ -104,3 +104,73 @@ a { color:inherit; text-decoration:none; } button,input,select { font:inherit; }
 .bill-issues { display:grid;gap:5px;margin:12px 0 0;padding:10px 10px 10px 25px;border-radius:6px;background:#fff3ef;color:#964b3a;font-size:10px;line-height:1.5; }
 @media (max-width:900px) { .bill-workspace { grid-template-columns:minmax(0,1.4fr) minmax(250px,.8fr); }.bill-main .bill-section { padding:20px; }.bill-charge-row { grid-template-columns:minmax(90px,1fr) 95px minmax(100px,.9fr) 30px;gap:6px; } }
 @media (max-width:700px) { .bill-workspace { grid-template-columns:1fr; }.bill-summary { border-left:0;border-top:1px solid #e8eee9; }.bill-section-heading { align-items:flex-start;flex-direction:column; }.bill-tax-controls { grid-template-columns:1fr;gap:16px; }.bill-charge-row { grid-template-columns:minmax(0,1fr) minmax(90px,.55fr) 30px; }.bill-charge-name { grid-column:1/3; }.bill-charge-split { grid-column:1/3; }.bill-charge-remove { grid-column:3;grid-row:2;align-self:end; }.bill-item-row { grid-template-columns:minmax(0,1fr) 95px 30px;gap:6px; } }
+
+.attendance-workspace { max-width:1120px;margin:0 auto; }
+.attendance-loading { max-width:1120px;margin:0 auto;padding:24px;color:var(--muted);font-size:13px; }
+.attendance-alert,.attendance-inline-error { margin:0 0 16px;padding:12px 15px;border-radius:7px;background:#fff3ef;color:#964b3a;font-size:11px;line-height:1.55; }
+.attendance-summary { padding:23px;border:1px solid #dfe9df;border-radius:11px;background:#f7faf5; }
+.attendance-summary-heading,.attendance-panel-heading { display:flex;align-items:flex-start;justify-content:space-between;gap:18px; }
+.attendance-summary-heading h2,.attendance-panel-heading h2 { margin:7px 0 0;font:700 17px var(--font-display);letter-spacing:-.3px; }
+.attendance-summary-heading>p { margin:5px 0 0;color:#77867c;font-size:10px; }
+.attendance-summary-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px; }
+.attendance-summary-grid>div { min-width:0;padding:13px 15px;border:1px solid #e3ebe3;border-radius:8px;background:#fff; }
+.attendance-summary-grid span { display:block;color:#708076;font-size:10px; }
+.attendance-summary-grid strong { display:block;margin-top:7px;color:#294536;font:700 19px var(--font-display);letter-spacing:-.5px;white-space:nowrap; }
+.attendance-summary-grid .attendance-positive strong { color:#347849; }
+.attendance-summary-grid .attendance-negative strong { color:#a45543; }
+.attendance-summary-note { margin:12px 0 0;color:#748179;font-size:10px;line-height:1.6; }
+.attendance-panel { margin-top:17px;padding:23px;border:1px solid var(--line);border-radius:11px;background:#fff;box-shadow:0 12px 35px rgba(23,55,44,.035); }
+.attendance-panel-heading { align-items:center;margin-bottom:19px; }
+.attendance-panel-heading .eyebrow,.attendance-summary-heading .eyebrow { font-size:9px; }
+.attendance-panel-heading p { margin:6px 0 0;color:#748179;font-size:11px;line-height:1.5; }
+.attendance-month-field { display:grid;gap:6px;color:#5c6a61;font-size:10px;font-weight:600; }
+.attendance-month-field input,.attendance-shift-form input,.attendance-shift-form select,.attendance-bulk select { min-height:37px;padding:0 9px;border:1px solid #dce5de;border-radius:6px;background:#fff;color:#33483b;font-size:11px; }
+.attendance-mode { display:flex;flex-wrap:wrap;gap:10px 18px;margin:0;padding:13px 0;border:0;border-top:1px solid #edf1ed;border-bottom:1px solid #edf1ed; }
+.attendance-mode legend { float:left;width:auto;margin:0 17px 0 0;color:#5c6a61;font-size:10px;font-weight:700; }
+.attendance-mode label { display:flex;align-items:center;gap:6px;color:#526459;font-size:11px; }
+.attendance-mode input,.attendance-select-cell input { accent-color:var(--green); }
+.attendance-shifts { margin-top:18px; }
+.attendance-shifts-heading { display:flex;align-items:center;justify-content:space-between;gap:12px; }
+.attendance-shifts-heading>div { display:grid;gap:4px; }
+.attendance-shifts-heading strong { color:#354b3c;font-size:11px; }
+.attendance-shifts-heading>div>span { color:#7b887f;font-size:10px; }
+.attendance-shifts-heading .button,.attendance-shift-form .button,.attendance-bulk .button { min-height:34px;padding:0 11px;font-size:10px; }
+.attendance-shift-list { display:flex;flex-wrap:wrap;gap:8px;margin:11px 0 0;padding:0;list-style:none; }
+.attendance-shift-list li { display:flex;align-items:center;gap:11px;padding:7px 9px;border:1px solid #e4ebe5;border-radius:7px;background:#fafcf9; }
+.attendance-shift-list li>span { display:grid;gap:3px; }
+.attendance-shift-list strong { color:#3e5646;font-size:10px; }
+.attendance-shift-list small { color:#78857c;font-size:9px; }
+.attendance-remove { width:26px;height:26px;display:grid;place-items:center;border:0;border-radius:5px;background:transparent;color:#89968d;cursor:pointer; }
+.attendance-remove:hover { background:#fff1ed;color:#9a6154; }
+.attendance-shift-form { display:grid;grid-template-columns:minmax(150px,1fr) 135px 135px auto;align-items:end;gap:10px;margin-top:12px;padding:13px;border:1px solid #e5ece6;border-radius:8px;background:#fafcf9; }
+.attendance-shift-form label { display:grid;gap:5px;color:#5c6a61;font-size:10px;font-weight:600; }
+.attendance-shift-form-actions { display:flex;align-items:center;gap:4px; }
+.attendance-inline-error { margin:10px 0 0;padding:8px 10px; }
+.attendance-empty-shifts { display:flex;align-items:center;gap:7px;margin:13px 0 0;padding:10px 12px;border-radius:6px;background:#f8faf7;color:#748179;font-size:10px; }
+.attendance-empty-shifts svg { color:var(--green);flex-shrink:0; }
+.attendance-bulk { display:flex;align-items:center;gap:9px;margin:17px 0 0;padding:10px 12px;border:1px solid #e3ebe3;border-radius:7px;background:#f8faf7; }
+.attendance-bulk>span { margin-right:auto;color:#53675a;font-size:10px;font-weight:700; }
+.attendance-bulk select { min-width:145px; }
+.attendance-bulk .button:disabled { opacity:.45;cursor:not-allowed; }
+.attendance-table-wrap { overflow:auto;margin-top:18px;border:1px solid #e4ebe5;border-radius:8px; }
+.attendance-table { width:100%;min-width:1020px;border-collapse:collapse;font-size:10px; }
+.attendance-table thead { background:#f7faf7; }
+.attendance-table th,.attendance-table td { padding:9px 10px;border-bottom:1px solid #edf1ed;text-align:left;vertical-align:middle; }
+.attendance-table thead th { color:#718078;font-size:9px;font-weight:700;white-space:nowrap; }
+.attendance-table tbody tr:last-child th,.attendance-table tbody tr:last-child td { border-bottom:0; }
+.attendance-table tbody th { width:108px;color:#405648;font-size:10px;font-weight:600;white-space:nowrap; }
+.attendance-table td { color:#53675a;white-space:nowrap; }
+.attendance-table td>select,.attendance-table td input[type='time'],.attendance-hours-field input { width:100%;min-width:128px;height:34px;padding:0 7px;border:1px solid #dfe7df;border-radius:5px;background:#fff;color:#3b5143;font-size:10px; }
+.attendance-table td>select { min-width:145px; }
+.attendance-select-cell { width:33px; }
+.attendance-select-cell input { width:14px;height:14px;cursor:pointer; }
+.attendance-schedule-detail { display:block;margin-top:4px;color:#829087;font-size:9px; }
+.attendance-hours-field { display:flex;align-items:center;gap:6px;color:#77847d;font-size:9px; }
+.attendance-hours-field input { min-width:84px;max-width:100px; }
+.attendance-positive { color:#347849!important;font-weight:700; }
+.attendance-negative { color:#a45543!important;font-weight:700; }
+.attendance-muted { color:#89958d;font-size:9px; }
+.attendance-privacy { display:flex;align-items:center;gap:6px;margin:14px 0 0;color:#78877d;font-size:9px; }
+.attendance-privacy svg { color:#5f8a65;flex-shrink:0; }
+@media (max-width:900px) { .attendance-panel,.attendance-summary { padding:19px; }.attendance-shift-form { grid-template-columns:minmax(120px,1fr) 120px 120px; }.attendance-shift-form-actions { grid-column:1/-1;justify-content:flex-end; }.attendance-table { min-width:960px; } }
+@media (max-width:700px) { .attendance-summary-heading,.attendance-panel-heading { align-items:stretch;flex-direction:column; }.attendance-summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.attendance-summary-grid>div { padding:11px; }.attendance-summary-grid strong { font-size:17px; }.attendance-month-field { max-width:210px; }.attendance-mode { gap:8px 13px; }.attendance-mode legend { width:100%; }.attendance-shifts-heading { align-items:flex-start; }.attendance-shift-form { grid-template-columns:1fr 1fr; }.attendance-shift-form label:first-child { grid-column:1/-1; }.attendance-shift-form-actions { grid-column:1/-1; }.attendance-bulk { align-items:stretch;flex-wrap:wrap; }.attendance-bulk>span { flex-basis:100%; }.attendance-bulk label,.attendance-bulk select,.attendance-bulk .button { width:100%; }.attendance-panel { padding:15px; } }

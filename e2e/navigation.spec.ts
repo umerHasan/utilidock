@@ -6,6 +6,38 @@ test('homepage links through categories and into a utility', async ({ page }) =>
   await page.getByRole('link', { name: /Image to PDF/ }).first().click(); await expect(page).toHaveURL(/image-to-pdf$/); await expect(page.getByRole('heading', { name: 'Choose and arrange images' })).toBeVisible();
 });
 test('search filters the registered tools', async ({ page }) => { await page.goto('/'); await page.getByRole('textbox', { name: 'Search tools' }).fill('merge'); await expect(page.getByRole('link', { name: /Merge PDF/ }).last()).toBeVisible(); });
+test('attendance tracker compares a completed day against its shift', async ({ page }) => {
+  await page.goto('/tools/time/attendance-tracker');
+  await expect(page.getByRole('heading', { name: 'Attendance Hours Tracker', exact: true })).toBeVisible();
+  await expect(page.getByRole('radio', { name: 'Shift' })).toBeChecked();
+
+  const { monthValue, dateValue, daysInMonth } = await page.evaluate(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    return {
+      monthValue: `${year}-${String(month).padStart(2, '0')}`,
+      dateValue: `${year}-${String(month).padStart(2, '0')}-01`,
+      daysInMonth: new Date(year, month, 0).getDate(),
+    };
+  });
+  const month = page.getByLabel('Attendance month');
+  await month.fill(monthValue);
+  await expect(page.getByRole('row')).toHaveCount(daysInMonth + 1);
+  await page.getByRole('button', { name: 'Add shift' }).click();
+  await page.getByLabel('Shift name').fill('Day shift');
+  await page.getByLabel('Start time').fill('09:00');
+  await page.getByLabel('End time').fill('17:00');
+  await page.getByRole('button', { name: 'Save shift' }).click();
+  await expect(page.getByRole('combobox', { name: `Scheduled shift for ${dateValue}` })).toHaveValue(/shift-/);
+  await page.getByLabel(`Clock in for ${dateValue}`).fill('09:00');
+  await page.getByLabel(`Clock out for ${dateValue}`).fill('16:30');
+
+  const summary = page.getByRole('region', { name: 'Monthly summary' });
+  await expect(summary.getByText(`${daysInMonth * 8}h 00m`)).toBeVisible();
+  await expect(summary.getByText('7h 30m')).toBeVisible();
+  await expect(page.getByRole('row').nth(1).getByText('−0h 30m')).toBeVisible();
+});
 test('image conversion downloads a generated PDF', async ({ page }) => {
   await page.goto('/tools/pdf/image-to-pdf');
   const dataUrls = await page.evaluate(() => { const canvas = document.createElement('canvas'); canvas.width = 2; canvas.height = 1; const context = canvas.getContext('2d')!; context.fillStyle = '#263'; context.fillRect(0, 0, 2, 1); return { png: canvas.toDataURL('image/png'), webp: canvas.toDataURL('image/webp') }; });
@@ -34,7 +66,7 @@ test('PDF merge downloads a combined document', async ({ page }) => {
 });
 test('mobile layouts fit the viewport without horizontal scrolling', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const route of ['/', '/tools/pdf/image-to-pdf']) {
+  for (const route of ['/', '/tools/pdf/image-to-pdf', '/tools/time/attendance-tracker']) {
     await page.goto(route);
     const overflows = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
     expect(overflows, `${route} should fit on a 390px viewport`).toBe(false);

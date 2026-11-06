@@ -1,6 +1,6 @@
 # UtiliDock
 
-Everyday tools, one place. UtiliDock is a registry-driven Next.js utilities platform, starting with browser-based Image to PDF and Merge PDF tools.
+Everyday tools, one place. UtiliDock is a registry-driven Next.js utilities platform with browser-based PDF, bill splitting, and attendance hours tools.
 
 ## Requirements and setup
 
@@ -23,7 +23,7 @@ npm run build     # production build
 npm start         # serve the production build
 npm test          # Vitest unit and PDF processing tests
 npm run test:watch
-npm run test:e2e   # browser navigation, conversion, merge, and mobile checks (requires a running server)
+npm run test:e2e   # browser navigation, attendance, conversion, merge, and mobile checks (requires a running server)
 ```
 
 For browser checks against the production build, start the app in one terminal with `npm run build && npm start`, then run `npm run test:e2e` in another terminal.
