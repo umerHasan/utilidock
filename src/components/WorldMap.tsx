@@ -4,7 +4,7 @@ import { useRef, useState, type MouseEvent, type PointerEvent, type WheelEvent }
 import { geoEquirectangular, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
-import type { FeatureCollection, Geometry } from 'geojson';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import worldData from 'world-atlas/countries-110m.json';
 import { Download, Eraser, Globe2, Minus, MousePointer2, Paintbrush, Pencil, Plus, RotateCcw, Trash2, Type } from 'lucide-react';
 
@@ -13,6 +13,10 @@ type Point = [number, number];
 type Stroke = { points: Point[]; color: string };
 type TextAnnotation = { id: string; x: number; y: number; text: string; color: string };
 type MapState = { colors: Record<string, string>; strokes: Stroke[]; annotations: TextAnnotation[] };
+type LayerKey = 'rivers' | 'lakes' | 'mountains' | 'waterfalls';
+type PhysicalProperties = { featurecla?: string; name?: string | null; scalerank?: number; elevation?: number };
+type PhysicalFeatureCollection = { features: Array<Feature<Geometry, PhysicalProperties>> };
+type PhysicalFeatures = Partial<Record<LayerKey, Array<Feature<Geometry, PhysicalProperties>>>>;
 type Mode = 'fill' | 'draw' | 'erase' | 'text' | 'pan';
 type MapView = { x: number; y: number; zoom: number };
 type TextEditor = { id: string | null; x: number; y: number; screenX: number; screenY: number; value: string };
@@ -24,6 +28,33 @@ const countries = (feature(topology, topology.objects.countries) as FeatureColle
   .sort((a, b) => a.properties.name.localeCompare(b.properties.name));
 const projection = geoEquirectangular().fitExtent([[24, 22], [976, 478]], { type: 'Sphere' });
 const path = geoPath(projection);
+const naturalLayerOptions: Array<{ key: LayerKey; label: string; file: string }> = [
+  { key: 'rivers', label: 'Rivers', file: 'rivers-50m.json' },
+  { key: 'lakes', label: 'Lakes', file: 'lakes-50m.json' },
+  { key: 'mountains', label: 'Mountain peaks', file: 'elevation-points-50m.json' },
+  { key: 'waterfalls', label: 'Waterfalls', file: 'landmarks-50m.json' },
+];
+const layerLabels = Object.fromEntries(naturalLayerOptions.map(({ key, label }) => [key, label])) as Record<LayerKey, string>;
+
+async function loadPhysicalLayer(key: LayerKey) {
+  const layer = naturalLayerOptions.find((option) => option.key === key);
+  if (!layer) throw new Error('Unknown physical geography layer.');
+  const response = await fetch(`/data/world/${layer.file}`);
+  if (!response.ok) throw new Error(`The data request returned ${response.status}.`);
+  const collection = await response.json() as PhysicalFeatureCollection | null;
+  if (!collection || !Array.isArray(collection.features)) throw new Error('The geographic data format is invalid.');
+  const features = collection.features;
+  switch (key) {
+    case 'rivers':
+      return features.filter((item) => (item.properties.featurecla === 'River' || item.properties.featurecla === 'Lake Centerline') && (item.properties.scalerank ?? Infinity) <= 4);
+    case 'lakes':
+      return features.filter((item) => item.properties.featurecla === 'Lake' || item.properties.featurecla === 'Alkaline Lake');
+    case 'mountains':
+      return features.filter((item) => item.properties.featurecla === 'mountain' && item.geometry.type === 'Point');
+    case 'waterfalls':
+      return features.filter((item) => item.properties.featurecla === 'waterfall' && item.geometry.type === 'Point');
+  }
+}
 const palette = [
   { name: 'Forest', color: '#347d68' },
   { name: 'Mint', color: '#91cbb0' },
@@ -46,6 +77,20 @@ export function WorldMap() {
   const [mode, setMode] = useState<Mode>('fill');
   const [color, setColor] = useState(palette[0].color);
   const [labels, setLabels] = useState(true);
+  const [layers, setLayers] = useState<Record<LayerKey, boolean>>({
+    rivers: false,
+    lakes: false,
+    mountains: false,
+    waterfalls: false,
+  });
+  const [layerFeatures, setLayerFeatures] = useState<PhysicalFeatures>({});
+  const [layerLoading, setLayerLoading] = useState<Record<LayerKey, boolean>>({
+    rivers: false,
+    lakes: false,
+    mountains: false,
+    waterfalls: false,
+  });
+  const [layerError, setLayerError] = useState('');
   const [selected, setSelected] = useState('');
   const [activeStroke, setActiveStroke] = useState<Stroke | null>(null);
   const [view, setView] = useState<MapView>({ x: 0, y: 0, zoom: 1 });
@@ -209,6 +254,21 @@ export function WorldMap() {
     setEditor(null);
   }
 
+  function toggleLayer(key: LayerKey, checked: boolean) {
+    setLayers((previous) => ({ ...previous, [key]: checked }));
+    if (!checked || layerFeatures[key] || layerLoading[key]) return;
+    setLayerError('');
+    setLayerLoading((previous) => ({ ...previous, [key]: true }));
+    void loadPhysicalLayer(key)
+      .then((features) => setLayerFeatures((previous) => ({ ...previous, [key]: features })))
+      .catch((error: unknown) => {
+        setLayers((previous) => ({ ...previous, [key]: false }));
+        const detail = error instanceof Error ? error.message : 'An unexpected data loading error occurred.';
+        setLayerError(`Couldn't load the ${layerLabels[key]} layer. ${detail}`);
+      })
+      .finally(() => setLayerLoading((previous) => ({ ...previous, [key]: false })));
+  }
+
   function download() {
     if (!svgRef.current) return;
     const svg = svgRef.current.cloneNode(true) as SVGSVGElement;
@@ -262,6 +322,7 @@ export function WorldMap() {
           </div></div>
           <div className="map-control-section"><span className="map-overline">02 / COLOR</span><h3>Choose a color</h3><p>Pick a shade for your next mark.</p><div className="map-palette">{palette.map((swatch) => <button key={swatch.color} type="button" className={color === swatch.color ? 'selected' : ''} style={{ backgroundColor: swatch.color }} aria-label={swatch.name} aria-pressed={color === swatch.color} onClick={() => setColor(swatch.color)} />)}<label className="map-custom-color" title="Custom color"><span>+</span><input aria-label="Custom color" type="color" value={color} onChange={(event) => setColor(event.target.value)} /></label></div></div>
           <div className="map-control-section"><span className="map-overline">03 / DISPLAY</span><div className="map-label-toggle"><div><h3>Country labels</h3><p>Show names on the map</p></div><button type="button" role="switch" aria-label="Country labels" aria-checked={labels} className={labels ? 'on' : ''} onClick={() => setLabels(!labels)}><span /></button></div></div>
+          <div className="map-control-section map-layer-control"><span className="map-overline">04 / NATURAL LAYERS</span><h3>Explore physical geography</h3><div className="map-layer-list">{naturalLayerOptions.map(({ key, label }) => <label key={key} className="map-layer-option"><input type="checkbox" aria-label={`${label} layer`} checked={layers[key]} onChange={(event) => toggleLayer(key, event.target.checked)} /><span>{label}</span><small>{layerLoading[key] ? 'Loading' : layerFeatures[key]?.length ?? ''}</small></label>)}</div>{layerError && <p className="map-layer-error" role="alert">{layerError}</p>}</div>
           <div className="map-control-section map-country-control"><label htmlFor="map-country">FIND A COUNTRY</label><select id="map-country" value={selected} onChange={(event) => setSelected(event.target.value)}><option value="">Select a country</option>{countries.map((country) => <option key={country.key} value={country.key}>{country.properties.name}</option>)}</select><button type="button" onClick={() => paintCountry(selected)} disabled={!selected || mode === 'draw'}>{mode === 'erase' ? 'Erase selected fill' : 'Fill selected country'}</button></div>
           <div className="map-tip"><MousePointer2 size={16} /><p><strong>A little tip</strong><br />{mode === 'draw' ? 'Drag anywhere on the map to draw.' : mode === 'erase' ? 'Select a country to remove its fill.' : 'Select a color, then click any country to fill it.'}</p></div>
         </aside>
@@ -272,6 +333,10 @@ export function WorldMap() {
               <rect width="1000" height="500" fill="#edf5f2" />
               <g fill="none" stroke="#dcebe5" strokeWidth="0.7">{[100, 200, 300, 400].map((y) => <line key={`y${y}`} x1="0" x2="1000" y1={y} y2={y} />)}{[100, 200, 300, 400, 500, 600, 700, 800, 900].map((x) => <line key={`x${x}`} x1={x} x2={x} y1="0" y2="500" />)}</g>
               <g>{countries.map((country) => <path key={country.key} d={path(country) ?? ''} fill={map.colors[country.key] ?? '#e1e9df'} stroke="#a9beb1" strokeWidth="0.8" strokeLinejoin="round" className="map-country" tabIndex={mode === 'draw' ? -1 : 0} role="button" aria-label={country.properties.name} onClick={() => paintCountry(country.key)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); paintCountry(country.key); } }}><title>{country.properties.name}</title></path>)}</g>
+              {layers.lakes && layerFeatures.lakes && <g className="map-layer-lakes" fill="#9dcbd8" fillOpacity=".72" stroke="#66aabd" strokeWidth="1" pointerEvents="none">{layerFeatures.lakes.map((lake, index) => <path key={index} d={path(lake) ?? ''}><title>{lake.properties.name ?? 'Lake'}</title></path>)}</g>}
+              {layers.rivers && layerFeatures.rivers && <g className="map-layer-rivers" fill="none" stroke="#438fa8" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" pointerEvents="none">{layerFeatures.rivers.map((river, index) => <path key={index} d={path(river) ?? ''}><title>{river.properties.name ?? 'River'}</title></path>)}</g>}
+              {layers.mountains && layerFeatures.mountains && <g className="map-layer-mountains" pointerEvents="none" fill="#8a6c4a" stroke="#fff" strokeWidth="1">{layerFeatures.mountains.map((mountain, index) => { const [x, y] = path.centroid(mountain); return <g key={index} transform={`translate(${x} ${y})`}><title>{mountain.properties.name ?? 'Mountain'}{mountain.properties.elevation ? ` · ${mountain.properties.elevation.toLocaleString()} m` : ''}</title><path d="M0,-5 L5,4 L-5,4 Z" /></g>; })}</g>}
+              {layers.waterfalls && layerFeatures.waterfalls && <g className="map-layer-waterfalls" pointerEvents="none" fill="#2c94b0" stroke="#fff" strokeWidth="1">{layerFeatures.waterfalls.map((waterfall, index) => { const [x, y] = path.centroid(waterfall); return <g key={index} transform={`translate(${x} ${y})`}><title>{waterfall.properties.name ?? 'Waterfall'}</title><circle r="4" /></g>; })}</g>}
               {labels && <g pointerEvents="none" fill="#526b5e" textAnchor="middle" fontFamily="Arial, sans-serif" fontSize="7" fontWeight="600">{countries.filter((country) => path.area(country) > 400).map((country) => { const [x, y] = path.centroid(country); return <text key={country.key} x={x} y={y}>{country.properties.name}</text>; })}</g>}
               <g pointerEvents="none" fill="none" strokeLinecap="round" strokeLinejoin="round">{strokes.map((stroke, index) => <path key={index} d={stroke.points.length === 1 ? `M${stroke.points[0][0]},${stroke.points[0][1]} l0.01,0` : `M${stroke.points.map((point) => point.join(',')).join(' L')}`} stroke={stroke.color} strokeWidth="3" />)}</g>
               <g>{map.annotations.map((annotation) => {
@@ -308,7 +373,7 @@ export function WorldMap() {
             {editor && <div className="map-text-editor" style={{ left: editor.screenX, top: editor.screenY }} onPointerDown={(event) => event.stopPropagation()}><input ref={textInputRef} aria-label="Map text" value={editor.value} maxLength={60} placeholder="Type a label..." onChange={(event) => setEditor({ ...editor, value: event.target.value })} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); finishTextEditor(); } if (event.key === 'Escape') setEditor(null); }} onBlur={finishTextEditor} /><span>Enter to place · Esc to cancel</span></div>}
           </div>
           <div className="map-stage-footer"><span><span className="map-footer-dot" /> {selectedCountry ? selectedCountry.properties.name : mode === 'text' ? 'Click anywhere to place a label' : 'Choose a country to get started'}</span><span>{coloredCount} {coloredCount === 1 ? 'area' : 'areas'} colored · {map.annotations.length} {map.annotations.length === 1 ? 'label' : 'labels'}</span></div>
-          <p className="map-disclaimer">Simplified Natural Earth boundaries · Not an authoritative or real-time political reference</p>
+          <p className="map-disclaimer">Natural Earth boundaries and 1:50m physical-feature data · Simplified reference, not an authoritative political map</p>
         </div>
       </div>
     </section>

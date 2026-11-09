@@ -54,10 +54,42 @@ test('colors countries, draws, undoes, exports, and clears the map', async ({ pa
 });
 
 test('world map fits a mobile viewport', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+  for (const width of [320, 340, 360, 390, 430]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/tools/geography/world-map');
+    await expect(page.getByRole('img', { name: 'Interactive world map' })).toBeVisible();
+    const layout = await page.evaluate(() => ({
+      viewportWidth: window.innerWidth,
+      pageWidth: document.documentElement.scrollWidth,
+      overflowingButtons: [...document.querySelectorAll<HTMLElement>('.map-workspace button:not(.map-country)')]
+        .filter((button) => button.scrollWidth > button.clientWidth + 2 || button.scrollHeight > button.clientHeight + 2)
+        .map((button) => button.innerText.trim()),
+    }));
+    expect(layout.pageWidth, `page should not overflow at ${width}px`).toBeLessThanOrEqual(layout.viewportWidth);
+    expect(layout.overflowingButtons, `button contents should fit at ${width}px`).toEqual([]);
+  }
+});
+
+test('natural geography layers can be toggled independently', async ({ page }) => {
   await page.goto('/tools/geography/world-map');
-  await expect(page.getByRole('img', { name: 'Interactive world map' })).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  const map = page.locator('.map-canvas svg');
+  for (const [label, key] of [
+    ['Rivers', 'rivers'],
+    ['Lakes', 'lakes'],
+    ['Mountain peaks', 'mountains'],
+    ['Waterfalls', 'waterfalls'],
+  ]) {
+    const layer = page.getByRole('checkbox', { name: `${label} layer` });
+    const features = map.locator(`.map-layer-${key} > *`);
+    await expect(layer).not.toBeChecked();
+    await layer.check();
+    await expect(features.first()).toBeVisible();
+    expect(await features.count(), `${label} should render when enabled`).toBeGreaterThan(0);
+    if (key === 'mountains') await expect(map.locator('.map-layer-mountains title').filter({ hasText: 'Mount Everest' })).toHaveCount(1);
+    if (key === 'waterfalls') await expect(map.locator('.map-layer-waterfalls title').filter({ hasText: 'Niagara Falls' })).toHaveCount(1);
+    await layer.uncheck();
+    await expect(features).toHaveCount(0);
+  }
 });
 
 test('places and edits text, zooms, and pans the map', async ({ page }) => {

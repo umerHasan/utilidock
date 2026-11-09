@@ -61,7 +61,7 @@ const faqs: Record<Utility['component'], Array<{ question: string; answer: strin
     { question: 'Where is my attendance data saved?', answer: 'Attendance entries and saved shifts are stored in this browser only. They are not uploaded to UtiliDock.' },
   ],
   'world-map': [
-    { question: 'Where do the boundaries come from?', answer: 'The map uses Natural Earth 1:110m country boundaries distributed by world-atlas (Natural Earth version 4.1.0). It is a simplified reference, not an authoritative or real-time depiction of political boundaries. Small countries and recent changes may be missing.' },
+    { question: 'Where does the map data come from?', answer: 'Country boundaries use Natural Earth 1:110m data distributed by world-atlas (Natural Earth version 4.1.0). Toggleable rivers, lakes, mountain peaks, and waterfalls use Natural Earth 1:50m physical-feature data. These are simplified reference layers; small features and recent changes may be missing, and boundaries are not an authoritative political reference.' },
     { question: 'Is my map saved?', answer: 'Your map stays in this page while it is open. Download an SVG to keep a copy; edits are not saved when you leave or reload.' },
     { question: 'Why are some country names not shown?', answer: 'Labels are shown for larger map areas to keep the overview readable. Use the country list to find and color smaller areas.' },
     { question: 'How do I add notes?', answer: 'Choose Add text, click anywhere on the map, and type a label. Click a label again in text mode to edit it. Use the zoom controls or mouse wheel to zoom, then choose Move map and drag to pan.' },
