@@ -41,7 +41,7 @@ For production, set `NEXT_PUBLIC_SITE_URL` to the public canonical origin, run `
 
 Tool pages resolve the `component` field in the registry to their dedicated specialized workspace. Processing remains independent of route/page rendering.
 
-The World Map uses the bundled world-atlas Natural Earth 4.1.0 1:110m dataset. Its simplified boundaries are not a real-time or authoritative political reference; small areas and recent changes may be absent. Map edits remain in the open page and can be exported as SVG.
+The World Map uses the bundled world-atlas Natural Earth 4.1.0 1:110m dataset. Its simplified boundaries are not a real-time or authoritative political reference; small areas and recent changes may be absent. Map edits, including colors, drawings, and text annotations, remain in the open page and can be exported as SVG. Use Add text to place or edit labels, the zoom controls or mouse wheel to zoom, and Move map to pan.
 
 ## Adding a utility
 

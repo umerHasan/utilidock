@@ -31,7 +31,7 @@ const instructions: Record<Utility['component'], string[]> = {
   ],
   'world-map': [
     'Choose a color and select a country on the map or from the country list.',
-    'Switch to Draw to sketch on the map, or toggle country labels for a clean view.',
+    'Add text anywhere, draw freehand, or toggle country labels for a clean view.',
     'Undo changes, clear the map, or download your work as an SVG.',
   ],
 };
@@ -64,6 +64,7 @@ const faqs: Record<Utility['component'], Array<{ question: string; answer: strin
     { question: 'Where do the boundaries come from?', answer: 'The map uses Natural Earth 1:110m country boundaries distributed by world-atlas (Natural Earth version 4.1.0). It is a simplified reference, not an authoritative or real-time depiction of political boundaries. Small countries and recent changes may be missing.' },
     { question: 'Is my map saved?', answer: 'Your map stays in this page while it is open. Download an SVG to keep a copy; edits are not saved when you leave or reload.' },
     { question: 'Why are some country names not shown?', answer: 'Labels are shown for larger map areas to keep the overview readable. Use the country list to find and color smaller areas.' },
+    { question: 'How do I add notes?', answer: 'Choose Add text, click anywhere on the map, and type a label. Click a label again in text mode to edit it. Use the zoom controls or mouse wheel to zoom, then choose Move map and drag to pan.' },
   ],
 };
 
