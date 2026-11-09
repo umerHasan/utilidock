@@ -1,6 +1,6 @@
 # UtiliDock
 
-Everyday tools, one place. UtiliDock is a registry-driven Next.js utilities platform with browser-based PDF, bill splitting, and attendance hours tools.
+Everyday tools, one place. UtiliDock is a registry-driven Next.js utilities platform with browser-based PDF, bill splitting, attendance hours, and geography tools.
 
 ## Requirements and setup
 
@@ -40,6 +40,8 @@ For production, set `NEXT_PUBLIC_SITE_URL` to the public canonical origin, run `
 - `src/app/globals.scss`: Bootstrap 5 base plus the product design system and responsive layouts.
 
 Tool pages resolve the `component` field in the registry to their dedicated specialized workspace. Processing remains independent of route/page rendering.
+
+The World Map uses the bundled world-atlas Natural Earth 4.1.0 1:110m dataset. Its simplified boundaries are not a real-time or authoritative political reference; small areas and recent changes may be absent. Map edits remain in the open page and can be exported as SVG.
 
 ## Adding a utility
 

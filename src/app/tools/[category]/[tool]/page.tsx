@@ -5,6 +5,7 @@ import { AttendanceTracker } from '@/components/AttendanceTracker';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ImageToPdf } from '@/components/ImageToPdf';
 import { MergePdf } from '@/components/MergePdf';
+import { WorldMap } from '@/components/WorldMap';
 import { getCategory, getUtility, utilities, type Utility } from '@/lib/registry';
 
 const instructions: Record<Utility['component'], string[]> = {
@@ -27,6 +28,11 @@ const instructions: Record<Utility['component'], string[]> = {
     'Choose a month; every date in it appears in the attendance table.',
     'Add a reusable shift to apply it to the month, clear it on days off, or switch to scheduled hours for daily targets.',
     'Enter clock-in and clock-out times to see your running scheduled, worked, overtime, and shortfall totals.',
+  ],
+  'world-map': [
+    'Choose a color and select a country on the map or from the country list.',
+    'Switch to Draw to sketch on the map, or toggle country labels for a clean view.',
+    'Undo changes, clear the map, or download your work as an SVG.',
   ],
 };
 
@@ -53,6 +59,11 @@ const faqs: Record<Utility['component'], Array<{ question: string; answer: strin
     { question: 'How do shifts and scheduled hours work?', answer: 'Shift mode is selected by default. Add a reusable shift and it is applied to every date in the selected month and used as the default in new months. Clear it on days off; you can also apply a shift to selected dates. Or switch to scheduled hours and enter a duration for each day.' },
     { question: 'Are overnight shifts and breaks supported?', answer: 'Overnight clock and shift times are supported. Worked hours are calculated as clock-out minus clock-in; breaks are not deducted.' },
     { question: 'Where is my attendance data saved?', answer: 'Attendance entries and saved shifts are stored in this browser only. They are not uploaded to UtiliDock.' },
+  ],
+  'world-map': [
+    { question: 'Where do the boundaries come from?', answer: 'The map uses Natural Earth 1:110m country boundaries distributed by world-atlas (Natural Earth version 4.1.0). It is a simplified reference, not an authoritative or real-time depiction of political boundaries. Small countries and recent changes may be missing.' },
+    { question: 'Is my map saved?', answer: 'Your map stays in this page while it is open. Download an SVG to keep a copy; edits are not saved when you leave or reload.' },
+    { question: 'Why are some country names not shown?', answer: 'Labels are shown for larger map areas to keep the overview readable. Use the country list to find and color smaller areas.' },
   ],
 };
 
@@ -84,6 +95,7 @@ export default async function UtilityPage({ params }: { params: Promise<{ catego
     'merge-pdf': <MergePdf />,
     'bill-splitter': <BillSplit />,
     'attendance-tracker': <AttendanceTracker />,
+    'world-map': <WorldMap />,
   }[tool.component];
 
   return (
