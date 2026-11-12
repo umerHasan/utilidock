@@ -41,7 +41,7 @@ For production, set `NEXT_PUBLIC_SITE_URL` to the public canonical origin, run `
 
 Tool pages resolve the `component` field in the registry to their dedicated specialized workspace. Processing remains independent of route/page rendering.
 
-The World Map uses bundled [Natural Earth](https://www.naturalearthdata.com/) data: country boundaries from world-atlas Natural Earth 4.1.0 at 1:110m, plus 1:50m physical-feature layers for rivers, lakes, mountain peaks, and waterfalls. Natural Earth data is public domain. Physical layers load on demand from local static files. The simplified boundaries are not a real-time or authoritative political reference; small areas and recent changes may be absent. Map edits, including colors, drawings, and text annotations, remain in the open page and can be exported as SVG. Use the layer toggles for physical features, Add text to place or edit labels, the zoom controls or mouse wheel to zoom, and Move map to pan.
+The World Map uses bundled [Natural Earth](https://www.naturalearthdata.com/) country boundaries from world-atlas Natural Earth 4.1.0 at 1:110m. Natural Earth data is public domain. The simplified boundaries are not a real-time or authoritative political reference; small areas and recent changes may be absent. Map edits, including colors, drawings, and text annotations, remain in the open page and can be exported as SVG. Use Fill countries to color regions, Add text to place or edit labels, the zoom controls or mouse wheel to zoom, and drag to pan when zoomed in. Hide the sidebar to expand the map canvas.
 
 ## Adding a utility
 

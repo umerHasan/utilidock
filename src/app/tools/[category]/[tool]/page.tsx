@@ -31,9 +31,9 @@ const instructions: Record<Utility['component'], string[]> = {
     'Enter clock-in and clock-out times to see your running scheduled, worked, overtime, and shortfall totals.',
   ],
   'world-map': [
-    'Choose a color and select a country on the map or from the country list.',
+    'Choose a color and Fill countries, then select a country on the map or from the country list.',
     'Add text anywhere, draw freehand, or toggle country labels for a clean view.',
-    'Undo changes, clear the map, or download your work as an SVG.',
+    'Drag to move the map while zoomed in; hide the sidebar for a larger canvas. Undo changes, clear the map, or download your work as an SVG.',
   ],
   'investment-tracker': [
     'Create an investment and record the amount you contributed for each year.',
@@ -67,10 +67,10 @@ const faqs: Record<Utility['component'], Array<{ question: string; answer: strin
     { question: 'Where is my attendance data saved?', answer: 'Attendance entries and saved shifts are stored in this browser only. They are not uploaded to UtiliDock.' },
   ],
   'world-map': [
-    { question: 'Where does the map data come from?', answer: 'Country boundaries use Natural Earth 1:110m data distributed by world-atlas (Natural Earth version 4.1.0). Toggleable rivers, lakes, mountain peaks, and waterfalls use Natural Earth 1:50m physical-feature data. These are simplified reference layers; small features and recent changes may be missing, and boundaries are not an authoritative political reference.' },
+    { question: 'Where does the map data come from?', answer: 'Country boundaries use Natural Earth 1:110m data distributed by world-atlas (Natural Earth version 4.1.0). These are simplified reference boundaries; small areas and recent changes may be missing, and the map is not an authoritative political reference.' },
     { question: 'Is my map saved?', answer: 'Your map stays in this page while it is open. Download an SVG to keep a copy; edits are not saved when you leave or reload.' },
     { question: 'Why are some country names not shown?', answer: 'Labels are shown for larger map areas to keep the overview readable. Use the country list to find and color smaller areas.' },
-    { question: 'How do I add notes?', answer: 'Choose Add text, click anywhere on the map, and type a label. Click a label again in text mode to edit it. Use the zoom controls or mouse wheel to zoom, then choose Move map and drag to pan.' },
+    { question: 'How do I add notes?', answer: 'Choose Add text, click anywhere on the map, and type a label. Click a label again in text mode to edit it. Use the zoom controls or mouse wheel to zoom; the map can be dragged to pan while zoomed in.' },
   ],
   'investment-tracker': [
     { question: 'How is profit or loss calculated?', answer: 'For each investment, profit or loss is its current value minus the sum of its yearly contributions. Portfolio totals use the same calculation across all investments.' },
@@ -112,7 +112,7 @@ export default async function UtilityPage({ params }: { params: Promise<{ catego
   }[tool.component];
 
   return (
-    <div className="page-shell container utility-page">
+    <div className={`page-shell container utility-page ${tool.component === 'world-map' ? 'utility-page-world-map' : ''}`}>
       <Breadcrumbs items={[
         { label: 'All tools', href: '/tools' },
         { label: category.name, href: `/tools/${category.slug}` },

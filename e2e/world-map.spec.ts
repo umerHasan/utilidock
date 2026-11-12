@@ -4,11 +4,28 @@ test('colors countries, draws, undoes, exports, and clears the map', async ({ pa
   await page.goto('/tools/geography/world-map');
   const map = page.getByRole('img', { name: 'Interactive world map' });
   const brazil = map.getByRole('button', { name: 'Brazil', exact: true });
-  await expect(brazil).toHaveAttribute('fill', '#e1e9df');
+  await expect(page.getByRole('button', { name: 'Move map' })).toHaveAttribute('aria-pressed', 'true');
+  await page.getByLabel('FIND A COUNTRY').selectOption({ label: 'Brazil' });
+  await page.getByRole('button', { name: 'Fill selected country' }).click();
+  await expect(brazil).toHaveAttribute('fill', '#347d68');
+  await page.getByRole('button', { name: 'Fill countries' }).click();
+  await expect(brazil).toHaveAttribute('fill', '#347d68');
+  const brazilLabel = map.locator('text').filter({ hasText: 'Brazil' });
+  await expect(brazilLabel).toHaveAttribute('fill', '#fff');
+
+  await page.getByRole('button', { name: 'Mint' }).click();
+  await brazil.click();
+  await expect(brazil).toHaveAttribute('fill', '#91cbb0');
+  await expect(brazilLabel).toHaveAttribute('fill', '#25382e');
+  await page.getByRole('button', { name: 'Forest' }).click();
   await brazil.click();
   await expect(brazil).toHaveAttribute('fill', '#347d68');
+  await expect(brazilLabel).toHaveAttribute('fill', '#fff');
+  await page.getByRole('button', { name: 'Mint' }).click();
+  await brazil.click();
+  await expect(brazil).toHaveAttribute('fill', '#91cbb0');
+  await expect(brazilLabel).toHaveAttribute('fill', '#25382e');
   await expect(page.getByText('1 area colored')).toBeVisible();
-
   await page.getByRole('button', { name: 'Coral', exact: true }).click();
   await page.getByLabel('FIND A COUNTRY').selectOption({ label: 'France' });
   await page.getByRole('button', { name: 'Fill selected country' }).click();
@@ -21,6 +38,16 @@ test('colors countries, draws, undoes, exports, and clears the map', async ({ pa
   await page.getByRole('switch', { name: 'Country labels' }).click();
   await expect(label).toHaveCount(0);
   await page.getByRole('switch', { name: 'Country labels' }).click();
+
+  const stageBeforeSidebarToggle = await page.locator('.map-stage').boundingBox();
+  if (!stageBeforeSidebarToggle) throw new Error('Map stage is not visible');
+  await page.getByRole('button', { name: 'Hide sidebar' }).click();
+  await expect(page.locator('.map-sidebar')).toHaveCount(0);
+  const stageAfterSidebarToggle = await page.locator('.map-stage').boundingBox();
+  if (!stageAfterSidebarToggle) throw new Error('Map stage is not visible');
+  expect(stageAfterSidebarToggle.width).toBeGreaterThan(stageBeforeSidebarToggle.width);
+  await page.getByRole('button', { name: 'Show sidebar' }).click();
+  await expect(page.locator('.map-sidebar')).toBeVisible();
 
   await page.getByRole('button', { name: 'Draw on map' }).click();
   const box = await map.boundingBox();
@@ -40,14 +67,14 @@ test('colors countries, draws, undoes, exports, and clears the map', async ({ pa
   const stream = await download.createReadStream();
   let exported = '';
   for await (const chunk of stream) exported += chunk.toString();
-  expect(exported).toContain('#347d68');
+  expect(exported).toContain('#91cbb0');
   expect(exported).toContain('Brazil');
 
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Clear map' }).click();
   await expect(brazil).toHaveAttribute('fill', '#e1e9df');
   await page.getByRole('button', { name: 'Undo' }).click();
-  await expect(brazil).toHaveAttribute('fill', '#347d68');
+  await expect(brazil).toHaveAttribute('fill', '#91cbb0');
   await page.getByRole('button', { name: 'Erase fill' }).click();
   await brazil.click();
   await expect(brazil).toHaveAttribute('fill', '#e1e9df');
@@ -70,33 +97,12 @@ test('world map fits a mobile viewport', async ({ page }) => {
   }
 });
 
-test('natural geography layers can be toggled independently', async ({ page }) => {
-  await page.goto('/tools/geography/world-map');
-  const map = page.locator('.map-canvas svg');
-  for (const [label, key] of [
-    ['Rivers', 'rivers'],
-    ['Lakes', 'lakes'],
-    ['Mountain peaks', 'mountains'],
-    ['Waterfalls', 'waterfalls'],
-  ]) {
-    const layer = page.getByRole('checkbox', { name: `${label} layer` });
-    const features = map.locator(`.map-layer-${key} > *`);
-    await expect(layer).not.toBeChecked();
-    await layer.check();
-    await expect(features.first()).toBeVisible();
-    expect(await features.count(), `${label} should render when enabled`).toBeGreaterThan(0);
-    if (key === 'mountains') await expect(map.locator('.map-layer-mountains title').filter({ hasText: 'Mount Everest' })).toHaveCount(1);
-    if (key === 'waterfalls') await expect(map.locator('.map-layer-waterfalls title').filter({ hasText: 'Niagara Falls' })).toHaveCount(1);
-    await layer.uncheck();
-    await expect(features).toHaveCount(0);
-  }
-});
-
 test('places and edits text, zooms, and pans the map', async ({ page }) => {
   await page.goto('/tools/geography/world-map');
   const map = page.getByRole('img', { name: 'Interactive world map' });
   const svg = page.locator('.map-canvas svg');
   const zoom = page.getByText('100%', { exact: true });
+  await expect(page.getByRole('button', { name: 'Move map' })).toHaveAttribute('aria-pressed', 'true');
 
   await page.getByRole('button', { name: 'Zoom in' }).click();
   await expect(page.getByText('125%', { exact: true })).toBeVisible();
@@ -128,7 +134,6 @@ test('places and edits text, zooms, and pans the map', async ({ page }) => {
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   await page.mouse.wheel(0, -180);
   await expect(page.getByText('120%', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Move map' }).click();
   const beforePan = (await svg.getAttribute('viewBox'))?.split(' ').map(Number);
   if (!beforePan) throw new Error('Map view is unavailable');
   await page.mouse.move(bounds.x + bounds.width * 0.6, bounds.y + bounds.height * 0.5);
