@@ -4,6 +4,7 @@ import { BillSplit } from '@/components/BillSplit';
 import { AttendanceTracker } from '@/components/AttendanceTracker';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { ImageToPdf } from '@/components/ImageToPdf';
+import { InvestmentTracker } from '@/components/InvestmentTracker';
 import { MergePdf } from '@/components/MergePdf';
 import { WorldMap } from '@/components/WorldMap';
 import { getCategory, getUtility, utilities, type Utility } from '@/lib/registry';
@@ -33,6 +34,11 @@ const instructions: Record<Utility['component'], string[]> = {
     'Choose a color and select a country on the map or from the country list.',
     'Add text anywhere, draw freehand, or toggle country labels for a clean view.',
     'Undo changes, clear the map, or download your work as an SVG.',
+  ],
+  'investment-tracker': [
+    'Create an investment and record the amount you contributed for each year.',
+    'Update its current value to see that investment’s profit or loss.',
+    'Review your portfolio totals and import or export your records as JSON.',
   ],
 };
 
@@ -66,6 +72,11 @@ const faqs: Record<Utility['component'], Array<{ question: string; answer: strin
     { question: 'Why are some country names not shown?', answer: 'Labels are shown for larger map areas to keep the overview readable. Use the country list to find and color smaller areas.' },
     { question: 'How do I add notes?', answer: 'Choose Add text, click anywhere on the map, and type a label. Click a label again in text mode to edit it. Use the zoom controls or mouse wheel to zoom, then choose Move map and drag to pan.' },
   ],
+  'investment-tracker': [
+    { question: 'How is profit or loss calculated?', answer: 'For each investment, profit or loss is its current value minus the sum of its yearly contributions. Portfolio totals use the same calculation across all investments.' },
+    { question: 'Can I add contributions from past years?', answer: 'Yes. Add one contribution amount per year for each investment, including any year from 1900 through the current year.' },
+    { question: 'Where is my investment data saved?', answer: 'Your investment records are stored in this browser only. Use JSON export to keep a backup or import a previously exported file.' },
+  ],
 };
 
 export function generateStaticParams() {
@@ -97,6 +108,7 @@ export default async function UtilityPage({ params }: { params: Promise<{ catego
     'bill-splitter': <BillSplit />,
     'attendance-tracker': <AttendanceTracker />,
     'world-map': <WorldMap />,
+    'investment-tracker': <InvestmentTracker />,
   }[tool.component];
 
   return (
